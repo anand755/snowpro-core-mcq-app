@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnowPro Certification Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .quiz-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #495057 0%, #6c757d 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(73, 80, 87, 0.2);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 15px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            gap: 20px;
+        }
+
+        .jump-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(73, 80, 87, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .jump-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(73, 80, 87, 0.3);
+        }
+
+        .jump-label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        .jump-input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95em;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .jump-input:focus {
+            outline: none;
+            border-color: white;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .jump-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .jump-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            transform: translateY(-1px);
+        }
+
+        .question-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95em;
+            box-shadow: 0 4px 15px rgba(73, 80, 87, 0.2);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            font-size: 1.2em;
+        }
+
+        .question-container {
+            padding: 40px 30px;
+        }
+
+        .question-number {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .options-container {
+            margin-bottom: 30px;
+        }
+
+        .option {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #495057;
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(73, 80, 87, 0.15);
+        }
+
+        .option.selected {
+            border-color: #495057;
+            background: #e9ecef;
+        }
+
+        .option.correct {
+            border-color: #28a745 !important;
+            background: #d4edda !important;
+            color: #155724 !important;
+        }
+
+        .option.incorrect {
+            border-color: #dc3545 !important;
+            background: #f8d7da !important;
+            color: #721c24 !important;
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(73, 80, 87, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            text-align: center;
+            padding: 40px 30px;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .result-score {
+            font-size: 4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-details {
+            font-size: 1.2em;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .quiz-header {
+                padding: 20px;
+            }
+            
+            .quiz-title {
+                font-size: 2em;
+            }
+            
+            .question-container {
+                padding: 30px 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .navigation-controls {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .jump-section {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .question-stats {
+                width: 100%;
+                justify-content: space-around;
+                gap: 10px;
+            }
+            
+            .stat-item {
+                flex-direction: column;
+                gap: 4px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">SnowPro Certification Quiz</h1>
+            <p class="quiz-subtitle">Test your Snowflake knowledge with interactive questions</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="navigation-controls">
+                <div class="jump-section">
+                    <span class="jump-label">🎯 Jump to Question</span>
+                    <input id="jumpInput" type="number" min="1" value="1" class="jump-input" />
+                    <button class="jump-btn" onclick="jumpToQuestion()">Go</button>
+                </div>
+                
+                <div class="question-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">📊</span>
+                        <span id="currentQuestionNum">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">📝</span>
+                        <span id="totalQuestionsNum">1336</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <span id="correctCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">❌</span>
+                        <span id="incorrectCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading questions...</p>
+            </div>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <h2 class="result-title">Quiz Completed!</h2>
+            <div class="result-score" id="resultScore">0%</div>
+            <div class="result-details" id="resultDetails"></div>
+            <div class="quiz-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="correctAnswers">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalQuestions">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="accuracy">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="restartQuiz()">Start New Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let selectedAnswers = new Set();
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let totalAnswered = 0;
+        let quizEnded = false;
+        let answeredState = new Map(); // key: index, value: { selections: Set, checked: boolean, correct: boolean }
+
+        // Load questions from external JSON file
+        async function loadQuestions() {
+            try {
+                const response = await fetch('SnowProQuestions.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                questions = data.questions;
+                console.log(`Loaded ${questions.length} questions from external JSON`);
+                startQuiz();
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                document.getElementById('questionContainer').innerHTML = 
+                    '<div class="loading"><p>Error loading questions. Please make sure SnowProQuestions.json is in the same directory and you are running this from a web server (not file://).</p><p>Try using the local server: python3 start_server.py</p></div>';
+            }
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            totalAnswered = 0;
+            quizEnded = false;
+            answeredState.clear();
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('questionContainer').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endQuiz();
+                return;
+            }
+
+            const question = questions[currentQuestionIndex];
+            selectedAnswers = new Set();
+            
+            const questionHTML = `
+                <div class="question-number">Question ${question.question_number}</div>
+                <div class="question-text">${question.question}</div>
+                <div class="options-container">
+                    ${question.options.map((option, index) => `
+                        <button class="option" onclick="selectOption(event, '${option.charAt(0)}')">
+                            ${option}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="button-container">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">Previous</button>
+                    <button class="btn btn-secondary" onclick="endQuiz()">End Quiz</button>
+                    <button class="btn btn-primary" id="checkAnswerBtn" onclick="checkAnswer()" disabled>
+                        Check Answer
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('questionContainer').innerHTML = questionHTML;
+            // Restore previous answered state if any
+            const prev = answeredState.get(currentQuestionIndex);
+            if (prev && prev.selections) {
+                prev.selections.forEach(letter => {
+                    const btn = Array.from(document.querySelectorAll('.option')).find(b => b.textContent.trim().startsWith(letter));
+                    if (btn) btn.classList.add('selected');
+                    selectedAnswers.add(letter);
+                });
+                document.getElementById('checkAnswerBtn').disabled = prev.checked; // if it was checked, disable until Next
+            }
+            updateProgress();
+        }
+
+        function selectOption(event, option) {
+            if (quizEnded) return;
+            const question = questions[currentQuestionIndex];
+            const correct = (question.answer || '').trim();
+            const isMulti = correct && correct.length > 1; // multiple answers like "BD", "ABC"
+
+            if (isMulti) {
+                // Toggle selection
+                if (selectedAnswers.has(option)) {
+                    selectedAnswers.delete(option);
+                    event.target.classList.remove('selected');
+                } else {
+                    selectedAnswers.add(option);
+                    event.target.classList.add('selected');
+                }
+            } else {
+                // Single-select: clear previous and set this one
+                document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                selectedAnswers.clear();
+                selectedAnswers.add(option);
+                event.target.classList.add('selected');
+            }
+
+            // Enable check answer button if at least one selected
+            document.getElementById('checkAnswerBtn').disabled = selectedAnswers.size === 0;
+        }
+
+        function checkAnswer() {
+            if (quizEnded) return;
+            if (selectedAnswers.size === 0) return;
+            
+            const question = questions[currentQuestionIndex];
+            const correctAnswer = question.answer;
+            const correctSet = new Set((correctAnswer || '').trim().split(''));
+            const isCorrect = setsEqual(correctSet, selectedAnswers);
+
+            // update scoring only first time we check this question
+            if (!answeredState.get(currentQuestionIndex)?.checked) {
+                if (isCorrect) {
+                    correctAnswers++;
+                } else {
+                    incorrectAnswers++;
+                }
+                totalAnswered++;
+            }
+            
+            // Disable all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.add('disabled');
+                opt.disabled = true;
+            });
+            
+            // Highlight correct and incorrect answers
+            document.querySelectorAll('.option').forEach(opt => {
+                const optionText = opt.textContent.trim();
+                const optionLetter = optionText.charAt(0);
+                
+                // Remove any existing highlighting classes
+                opt.classList.remove('correct', 'incorrect', 'selected');
+                
+                // Check if this option is in the correct answer
+                if (correctSet.has(optionLetter)) {
+                    opt.classList.add('correct');
+                } else if (selectedAnswers.has(optionLetter) && !isCorrect) {
+                    opt.classList.add('incorrect'); // selected but not correct
+                }
+            });
+            
+            // Update button
+            document.getElementById('checkAnswerBtn').textContent = 'Next Question';
+            document.getElementById('checkAnswerBtn').onclick = nextQuestion;
+            
+            // Save answered state
+            answeredState.set(currentQuestionIndex, {
+                selections: new Set(selectedAnswers),
+                checked: true,
+                correct: isCorrect
+            });
+
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function jumpToQuestion() {
+            const input = document.getElementById('jumpInput');
+            let val = parseInt(input.value, 10);
+            if (isNaN(val)) return;
+            val = Math.max(1, Math.min(val, questions.length));
+            currentQuestionIndex = val - 1;
+            showQuestion();
+        }
+
+        function setsEqual(a, b) {
+            if (a.size !== b.size) return false;
+            for (const v of a) if (!b.has(v)) return false;
+            return true;
+        }
+
+        function endQuiz() {
+            quizEnded = true;
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+            
+            const percentage = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+            
+            document.getElementById('resultScore').textContent = `${percentage}%`;
+            document.getElementById('resultDetails').textContent = 
+                `You answered ${correctAnswers} out of ${totalAnswered} questions correctly.`;
+            
+            document.getElementById('correctAnswers').textContent = correctAnswers;
+            document.getElementById('totalQuestions').textContent = totalAnswered;
+            document.getElementById('accuracy').textContent = `${percentage}%`;
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            // progress text removed to avoid duplication (info shown in stats bar)
+            
+            // Update navigation elements
+            const jumpInput = document.getElementById('jumpInput');
+            if (jumpInput) jumpInput.value = currentQuestionIndex + 1;
+            
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) prevBtn.disabled = currentQuestionIndex === 0;
+            
+            // Update stats
+            document.getElementById('currentQuestionNum').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestionsNum').textContent = questions.length;
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+        }
+
+        // Initialize quiz when page loads
+        window.addEventListener('load', loadQuestions);
+    </script>
+</body>
+</html>
